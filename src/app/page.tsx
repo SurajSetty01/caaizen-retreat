@@ -1,65 +1,351 @@
 import Image from "next/image";
+import {
+  ArrowRight,
+  Building2,
+  Camera,
+  Car,
+  Check,
+  Clock,
+  Flower2,
+  Leaf,
+  MapPin,
+  Phone,
+  ShieldCheck,
+  Trees,
+  Waves,
+} from "lucide-react";
+import { LeadForm } from "@/components/lead-form";
+
+const highlights = [
+  { label: "Plot sizes", value: "10 guntas+", detail: "Approx. 10,890 sq.ft. and above" },
+  { label: "Built form", value: "10%", detail: "Construction permitted as per regulations" },
+  { label: "Internal roads", value: "40 & 60 ft", detail: "Wide access inside a gated layout" },
+  { label: "Bidadi access", value: "10 min", detail: "Near the industrial growth corridor" },
+];
+
+const gardenFeatures = [
+  "Prepared nutrient-rich soil beds",
+  "Integrated drip irrigation",
+  "Seasonal planting calendar",
+  "Horticulture expert guidance",
+  "Starter kit at handover",
+  "Optional greenhouse and compost units",
+];
+
+const amenities = [
+  { icon: Trees, title: "Nature trails", copy: "Walking-first pathways through orchards, landscaped gardens and quiet green pockets." },
+  { icon: Waves, title: "Pool and clubhouse", copy: "Recreational spaces for weekends, community gatherings and slow family time." },
+  { icon: Flower2, title: "Meditation lawns", copy: "Yoga decks, low-noise zones and open-air seating for a calmer daily rhythm." },
+  { icon: ShieldCheck, title: "Gated security", copy: "Compound wall, CCTV surveillance and managed access for peace of mind." },
+  { icon: Building2, title: "Rental management", copy: "Optional resort-management tie-up for owners who want managed rental income." },
+  { icon: Camera, title: "Low-light zones", copy: "Reduced light pollution and landscape buffers designed for stargazing and rest." },
+];
+
+const locationPoints = [
+  ["Mysore Road", "5 mins"],
+  ["NICE Road", "25 mins"],
+  ["Bengaluru city centre", "60 mins"],
+  ["Art of Living International Center", "40 mins"],
+  ["Hospital / clinic", "15 mins"],
+  ["Hills and trek spots", "20-30 mins"],
+];
+
+function Logo() {
+  return (
+    <a href="#top" className="inline-flex flex-col leading-none" aria-label="Caaizen Retreat">
+      <span className="text-xl font-black uppercase tracking-[0.08em] text-white md:text-2xl">
+        Caaizen
+      </span>
+      <span className="mt-1 text-[0.6rem] font-semibold uppercase tracking-[0.52em] text-white/70">
+        Realty
+      </span>
+    </a>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#9e6f32]">
+      {children}
+    </p>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+    <main id="top" className="overflow-hidden">
+      <section className="relative min-h-screen bg-[#10170f] text-white">
         <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
+          src="/retreat/forest-cottage-deck.png"
+          alt="A forest cottage deck surrounded by dense greenery"
+          fill
           priority
+          sizes="100vw"
+          className="object-cover"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(12,18,11,0.88),rgba(12,18,11,0.58)_46%,rgba(12,18,11,0.26))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(201,162,93,0.2),transparent_30%)]" />
+
+        <header className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5 md:px-8">
+          <Logo />
+          <nav className="hidden items-center gap-7 text-sm font-medium text-white/78 md:flex">
+            <a className="transition hover:text-white" href="#location">Location</a>
+            <a className="transition hover:text-white" href="#land">Land</a>
+            <a className="transition hover:text-white" href="#amenities">Amenities</a>
+            <a className="transition hover:text-white" href="#lead">Callback</a>
+          </nav>
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="tel:+919731199655"
+            className="inline-flex h-10 items-center gap-2 border border-white/25 px-4 text-sm font-semibold text-white transition hover:border-[#c9a25d] hover:text-[#e0bd76]"
           >
+            <Phone className="size-4" />
+            <span className="hidden sm:inline">+91 97311 99655</span>
+            <span className="sm:hidden">Call</span>
+          </a>
+        </header>
+
+        <div className="relative z-10 mx-auto grid min-h-[calc(100vh-88px)] w-full max-w-7xl items-center gap-10 px-5 pb-12 pt-10 md:grid-cols-[1fr_420px] md:px-8 md:pb-16">
+          <div className="max-w-3xl animate-rise">
+            <p className="mb-5 inline-flex items-center gap-2 border border-white/20 bg-white/10 px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#e0bd76] backdrop-blur">
+              <MapPin className="size-4" />
+              Bidadi, Bengaluru
+            </p>
+            <h1 className="font-display text-5xl font-semibold leading-[0.95] text-white md:text-7xl lg:text-8xl">
+              The Retreat for land-led luxury living
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/78 md:text-xl">
+              A gated farmhouse community of expansive plots, compact cottages
+              and edible gardens near Mysore Road. Built for buyers who want
+              nature, privacy and long-term Bidadi growth in one address.
+            </p>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <a
+                href="#lead"
+                className="group inline-flex h-12 items-center justify-center gap-2 bg-[#c9a25d] px-6 text-sm font-bold uppercase tracking-[0.18em] text-[#10170f] transition hover:bg-[#e0bd76]"
+              >
+                Request callback
+                <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
+              </a>
+              <a
+                href="#details"
+                className="inline-flex h-12 items-center justify-center border border-white/25 px-6 text-sm font-bold uppercase tracking-[0.18em] text-white transition hover:border-white hover:bg-white/10"
+              >
+                View highlights
+              </a>
+            </div>
+          </div>
+
+          <div id="lead" className="animate-rise-delayed md:sticky md:top-5">
+            <LeadForm />
+          </div>
+        </div>
+      </section>
+
+      <section id="details" className="bg-[#182015] px-5 py-7 text-white md:px-8">
+        <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-4">
+          {highlights.map((item) => (
+            <div key={item.label} className="border-l border-white/15 pl-5">
+              <p className="text-xs uppercase tracking-[0.22em] text-white/45">{item.label}</p>
+              <p className="mt-2 font-display text-4xl font-semibold text-[#e0bd76]">{item.value}</p>
+              <p className="mt-1 text-sm leading-6 text-white/65">{item.detail}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section id="land" className="bg-[#f4f0e6] px-5 py-20 md:px-8 md:py-28">
+        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <div>
+            <SectionLabel>Core proposition</SectionLabel>
+            <h2 className="mt-4 font-display text-4xl font-semibold leading-tight text-[#182015] md:text-6xl">
+              Own land that gives back every season
+            </h2>
+            <p className="mt-6 text-lg leading-8 text-[#4c5847]">
+              Retreat is positioned for people who do not want another apartment
+              in the city. Each villa plot is planned around the privilege of
+              growing food, slowing down, and using the land as a private
+              weekend sanctuary or long-stay home.
+            </p>
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              {gardenFeatures.map((feature) => (
+                <div key={feature} className="flex items-start gap-3 border border-[#d7c8aa] bg-white/55 p-4">
+                  <Check className="mt-0.5 size-5 shrink-0 text-[#557247]" />
+                  <span className="text-sm font-medium leading-6 text-[#35402f]">{feature}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="relative min-h-[520px] overflow-hidden bg-[#24301f]">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+              src="/retreat/edible-garden.png"
+              alt="Raised edible garden beds with vegetables and herbs"
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#10170f]/90 to-transparent p-6 text-white">
+              <p className="max-w-md text-xl font-semibold">
+                Professionally prepared garden spaces, designed to thrive from day one.
+              </p>
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      <section className="bg-white px-5 py-20 md:px-8 md:py-28">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div className="relative min-h-[430px] overflow-hidden bg-[#182015] lg:min-h-[560px]">
+            <Image
+              src="/retreat/aerial-cottage-community.png"
+              alt="Aerial view of cottage community with green roofs and internal roads"
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover"
+            />
+          </div>
+          <div>
+            <SectionLabel>Community design</SectionLabel>
+            <h2 className="mt-4 font-display text-4xl font-semibold leading-tight md:text-6xl">
+              Spacious, managed and intentionally low-chaos
+            </h2>
+            <p className="mt-6 text-lg leading-8 text-[#4c5847]">
+              The brochure points to a rare mix: private land ownership, a
+              secure gated layout, nature-first amenities and optional hospitality
+              management. That makes the project relevant for end-use, weekend
+              retreat living and owners who want professional maintenance.
+            </p>
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              <div className="border border-[#e1d7c6] p-5">
+                <Clock className="size-6 text-[#9e6f32]" />
+                <p className="mt-4 text-lg font-semibold">Weekend-ready</p>
+                <p className="mt-2 text-sm leading-6 text-[#5e6759]">
+                  Close enough for city access, far enough to reset without traffic noise.
+                </p>
+              </div>
+              <div className="border border-[#e1d7c6] p-5">
+                <Leaf className="size-6 text-[#557247]" />
+                <p className="mt-4 text-lg font-semibold">Eco-conscious</p>
+                <p className="mt-2 text-sm leading-6 text-[#5e6759]">
+                  Compact cottages, passive design thinking and low-footprint living.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="location" className="bg-[#10170f] px-5 py-20 text-white md:px-8 md:py-28">
+        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.82fr_1.18fr]">
+          <div>
+            <SectionLabel>Location advantage</SectionLabel>
+            <h2 className="mt-4 font-display text-4xl font-semibold leading-tight md:text-6xl">
+              Bidadi is the growth story. Retreat is the quieter side of it.
+            </h2>
+            <p className="mt-6 text-lg leading-8 text-white/70">
+              The project sits near Mysore Road with access to the Bidadi
+              industrial corridor, NICE Road, forest reserves, hill trails and
+              upcoming regional infrastructure narratives highlighted in the brochure.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {locationPoints.map(([place, time]) => (
+              <div key={place} className="flex items-center justify-between border border-white/12 bg-white/[0.04] p-5">
+                <span className="text-white/78">{place}</span>
+                <span className="font-display text-2xl font-semibold text-[#e0bd76]">{time}</span>
+              </div>
+            ))}
+            <div className="border border-[#c9a25d]/40 bg-[#c9a25d]/10 p-5 sm:col-span-2">
+              <div className="flex items-start gap-3">
+                <Car className="mt-1 size-5 text-[#e0bd76]" />
+                <p className="text-sm leading-6 text-white/72">
+                  Exact location and route details are best shared after callback
+                  so interested buyers receive accurate navigation and availability.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="amenities" className="bg-[#eef3e7] px-5 py-20 md:px-8 md:py-28">
+        <div className="mx-auto max-w-7xl">
+          <div className="max-w-3xl">
+            <SectionLabel>Lifestyle infrastructure</SectionLabel>
+            <h2 className="mt-4 font-display text-4xl font-semibold leading-tight md:text-6xl">
+              Amenities that support stillness, family and resale confidence
+            </h2>
+          </div>
+          <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {amenities.map((item) => (
+              <article key={item.title} className="border border-[#d0dac6] bg-white p-6">
+                <item.icon className="size-7 text-[#557247]" />
+                <h3 className="mt-6 text-xl font-semibold">{item.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-[#5e6759]">{item.copy}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white px-5 py-20 md:px-8 md:py-28">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+          <div>
+            <SectionLabel>Master plan</SectionLabel>
+            <h2 className="mt-4 font-display text-4xl font-semibold leading-tight md:text-6xl">
+              Limited plotted layout with wide internal roads
+            </h2>
+            <p className="mt-6 text-lg leading-8 text-[#4c5847]">
+              The brochure layout shows 27 plotted parcels, perimeter greenery
+              and 40/60 ft roads. For ad traffic, this matters because it
+              communicates scarcity and order without overwhelming the buyer.
+            </p>
+            <div className="mt-8 border border-[#e1d7c6] bg-[#f8f6ef] p-5">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#9e6f32]">
+                Important disclosure
+              </p>
+              <p className="mt-3 text-sm leading-6 text-[#5e6759]">
+                As stated in the brochure, the land offered is agricultural/farm
+                land and does not fall under RERA. Buyers should complete
+                independent legal verification before purchase. Plot registration
+                is subject to issuance of the 11E Sketch.
+              </p>
+            </div>
+          </div>
+          <div className="overflow-hidden border border-[#e1d7c6] bg-[#6e7a5a] p-3">
+            <Image
+              src="/retreat/master-layout.png"
+              alt="Caaizen Retreat plotted master layout"
+              width={1191}
+              height={1685}
+              sizes="(min-width: 1024px) 48vw, 100vw"
+              className="h-auto w-full"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#182015] px-5 py-16 text-white md:px-8 md:py-24">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1fr_420px] lg:items-center">
+          <div>
+            <p className="font-display text-4xl font-semibold leading-tight md:text-6xl">
+              See if Retreat matches your budget, timeline and ownership goals.
+            </p>
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-white/70">
+              Submit your name and mobile number. The team will share current
+              availability, pricing, visit slots and exact location details.
+            </p>
+          </div>
+          <LeadForm compact />
+        </div>
+      </section>
+
+      <footer className="bg-[#0b100a] px-5 py-8 text-white/55 md:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 text-sm leading-6 md:flex-row md:items-center md:justify-between">
+          <p>Caaizen Realty · The Retreat · Bidadi, Bengaluru</p>
+          <p>Conceptual visuals are for representation. Specifications may vary.</p>
+        </div>
+      </footer>
+    </main>
   );
 }
