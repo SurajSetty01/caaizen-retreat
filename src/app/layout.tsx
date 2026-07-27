@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Geist, Geist_Mono } from "next/font/google";
+import "lenis/dist/lenis.css";
+import { SmoothScroll } from "@/components/smooth-scroll";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -69,9 +71,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} h-full scroll-smooth antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-[#f4f0e6] text-[#182015]">{children}</body>
+      <body className="min-h-full bg-[#f4f0e6] text-[#182015]">
+        <SmoothScroll>{children}</SmoothScroll>
+      </body>
     </html>
   );
 }

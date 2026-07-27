@@ -43,6 +43,23 @@ a {
   animation: rise 720ms ease-out 140ms both;
 }
 
+.villa-carousel-scroll {
+  scrollbar-color: #c9a25d rgba(16, 23, 15, 0.18);
+  scrollbar-width: thin;
+}
+
+.villa-carousel-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.villa-carousel-scroll::-webkit-scrollbar-track {
+  background: rgba(16, 23, 15, 0.16);
+}
+
+.villa-carousel-scroll::-webkit-scrollbar-thumb {
+  background: #c9a25d;
+}
+
 @keyframes rise {
   from {
     opacity: 0;

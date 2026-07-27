@@ -15,12 +15,65 @@ import {
   Waves,
 } from "lucide-react";
 import { LeadForm } from "@/components/lead-form";
+import { VillaCarousel } from "@/components/villa-carousel";
 
 const highlights = [
-  { label: "Plot sizes", value: "10 guntas+", detail: "Approx. 10,890 sq.ft. and above" },
+  { label: "Plot sizes", value: "10 guntas", detail: "Approx. 10,890 sq.ft. and above" },
   { label: "Built form", value: "10%", detail: "Construction permitted as per regulations" },
-  { label: "Internal roads", value: "40 & 60 ft", detail: "Wide access inside a gated layout" },
-  { label: "Bidadi access", value: "10 min", detail: "Near the industrial growth corridor" },
+  { label: "Internal roads", value: "40 & 60 ft", detail: "Wide landscaped roads inside a gated layout" },
+  { label: "Bidadi access", value: "10 mins", detail: "Near the industrial growth corridor" },
+];
+
+const villaImages = [
+  {
+    src: "/retreat/elevations/villa-elevation-5.jpg",
+    alt: "Single-storey villa elevation with a low sloped roof and garden frontage",
+    width: 1801,
+    height: 1274,
+    label: "Villa elevation 5",
+  },
+  {
+    src: "/retreat/elevations/villa-elevation-6.jpg",
+    alt: "Compact villa elevation with a covered deck in a landscaped setting",
+    width: 1274,
+    height: 1801,
+    label: "Villa elevation 6",
+  },
+  {
+    src: "/retreat/elevations/villa-elevation-7.jpg",
+    alt: "A-frame villa elevation with glass frontage and timber accents",
+    width: 1801,
+    height: 1274,
+    label: "Villa elevation 7",
+  },
+  {
+    src: "/retreat/elevations/villa-elevation-8.jpg",
+    alt: "Villa elevation with a black facade and open garden-facing deck",
+    width: 1274,
+    height: 1801,
+    label: "Villa elevation 8",
+  },
+  {
+    src: "/retreat/elevations/villa-elevation-9.jpg",
+    alt: "Modern compact villa elevation surrounded by dense greenery",
+    width: 1274,
+    height: 1801,
+    label: "Villa elevation 9",
+  },
+  {
+    src: "/retreat/elevations/villa-elevation-10.jpg",
+    alt: "Two-level villa elevation with large glazing below mature trees",
+    width: 1274,
+    height: 1801,
+    label: "Villa elevation 10",
+  },
+  {
+    src: "/retreat/elevations/villa-elevation-11.jpg",
+    alt: "Elevated villa elevation with broad windows and tropical planting",
+    width: 1274,
+    height: 1801,
+    label: "Villa elevation 11",
+  },
 ];
 
 const gardenFeatures = [
@@ -42,7 +95,7 @@ const amenities = [
 ];
 
 const locationPoints = [
-  ["Mysore Road", "5 mins"],
+  ["Mysore Expressway", "5 mins"],
   ["NICE Road", "25 mins"],
   ["Bengaluru city centre", "60 mins"],
   ["Art of Living International Center", "40 mins"],
@@ -52,13 +105,28 @@ const locationPoints = [
 
 function Logo() {
   return (
-    <a href="#top" className="inline-flex flex-col leading-none" aria-label="Caaizen Retreat">
-      <span className="text-xl font-black uppercase tracking-[0.08em] text-white md:text-2xl">
-        Caaizen
-      </span>
-      <span className="mt-1 text-[0.6rem] font-semibold uppercase tracking-[0.52em] text-white/70">
-        Realty
-      </span>
+    <a
+      href="#top"
+      className="inline-flex items-center gap-2 bg-white/95 px-2 py-1.5 shadow-xl shadow-black/20 sm:gap-3 sm:px-3 sm:py-2"
+      aria-label="Caaizen Realty The Retreat"
+    >
+      <Image
+        src="/retreat/logos/caaizen-logo.png"
+        alt="Caaizen Realty"
+        width={451}
+        height={201}
+        priority
+        className="h-7 w-auto sm:h-9 md:h-10"
+      />
+      <span className="h-8 w-px bg-[#182015]/18 sm:h-10" aria-hidden="true" />
+      <Image
+        src="/retreat/logos/the-retreat-logo.png"
+        alt="The Retreat"
+        width={732}
+        height={352}
+        priority
+        className="h-8 w-auto sm:h-10 md:h-12"
+      />
     </a>
   );
 }
@@ -147,7 +215,7 @@ export default function Home() {
           {highlights.map((item) => (
             <div key={item.label} className="border-l border-white/15 pl-5">
               <p className="text-xs uppercase tracking-[0.22em] text-white/45">{item.label}</p>
-              <p className="mt-2 font-display text-4xl font-semibold text-[#e0bd76]">{item.value}</p>
+              <p className="mt-2 font-sans text-4xl font-extrabold tracking-normal text-[#e0bd76] [font-variant-numeric:tabular-nums]">{item.value}</p>
               <p className="mt-1 text-sm leading-6 text-white/65">{item.detail}</p>
             </div>
           ))}
@@ -162,7 +230,7 @@ export default function Home() {
               Own land that gives back every season
             </h2>
             <p className="mt-6 text-lg leading-8 text-[#4c5847]">
-              Retreat is positioned for people who do not want another apartment
+              The Retreat is positioned for people who do not want another apartment
               in the city. Each villa plot is planned around the privilege of
               growing food, slowing down, and using the land as a private
               weekend sanctuary or long-stay home.
@@ -186,7 +254,7 @@ export default function Home() {
             />
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#10170f]/90 to-transparent p-6 text-white">
               <p className="max-w-md text-xl font-semibold">
-                Professionally prepared garden spaces, designed to thrive from day one.
+                Professionally customised garden spaces, designed to thrive from day one.
               </p>
             </div>
           </div>
@@ -195,15 +263,7 @@ export default function Home() {
 
       <section className="bg-white px-5 py-20 md:px-8 md:py-28">
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-          <div className="relative min-h-[430px] overflow-hidden bg-[#182015] lg:min-h-[560px]">
-            <Image
-              src="/retreat/aerial-cottage-community.png"
-              alt="Aerial view of cottage community with green roofs and internal roads"
-              fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-cover"
-            />
-          </div>
+          <VillaCarousel images={villaImages} />
           <div>
             <SectionLabel>Community design</SectionLabel>
             <h2 className="mt-4 font-display text-4xl font-semibold leading-tight md:text-6xl">
@@ -240,7 +300,7 @@ export default function Home() {
           <div>
             <SectionLabel>Location advantage</SectionLabel>
             <h2 className="mt-4 font-display text-4xl font-semibold leading-tight md:text-6xl">
-              Bidadi is the growth story. Retreat is the quieter side of it.
+              Bidadi is the growth story. The Retreat is the quieter side of it.
             </h2>
             <p className="mt-6 text-lg leading-8 text-white/70">
               The project sits near Mysore Road with access to the Bidadi
@@ -293,7 +353,7 @@ export default function Home() {
           <div>
             <SectionLabel>Master plan</SectionLabel>
             <h2 className="mt-4 font-display text-4xl font-semibold leading-tight md:text-6xl">
-              Limited plotted layout with wide internal roads
+              Limited plotted layout with landscaped internal roads
             </h2>
             <p className="mt-6 text-lg leading-8 text-[#4c5847]">
               The brochure layout shows 27 plotted parcels, perimeter greenery
@@ -305,16 +365,13 @@ export default function Home() {
                 Important disclosure
               </p>
               <p className="mt-3 text-sm leading-6 text-[#5e6759]">
-                As stated in the brochure, the land offered is agricultural/farm
-                land and does not fall under RERA. Buyers should complete
-                independent legal verification before purchase. Plot registration
-                is subject to issuance of the 11E Sketch.
+                The master plan has been thoughtfully designed with fewer than three plots per acre, creating a low-density gated community with modern infrastructure, designer landscapes, and well-planned access roads.
               </p>
             </div>
           </div>
           <div className="overflow-hidden border border-[#e1d7c6] bg-[#6e7a5a] p-3">
             <Image
-              src="/retreat/master-layout.png"
+              src="/retreat/master-layout.jpeg"
               alt="Caaizen Retreat plotted master layout"
               width={1191}
               height={1685}
@@ -329,7 +386,7 @@ export default function Home() {
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1fr_420px] lg:items-center">
           <div>
             <p className="font-display text-4xl font-semibold leading-tight md:text-6xl">
-              See if Retreat matches your budget, timeline and ownership goals.
+              If you aspire to experience nature-inspired living in a resort-themed gated community surrounded by fresh air and pollution-free surroundings
             </p>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-white/70">
               Submit your name and mobile number. The team will share current
