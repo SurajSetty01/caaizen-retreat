@@ -356,18 +356,8 @@ export default function Home() {
               Limited plotted layout with landscaped internal roads
             </h2>
             <p className="mt-6 text-lg leading-8 text-[#4c5847]">
-              The brochure layout shows 27 plotted parcels, perimeter greenery
-              and 40/60 ft roads. For ad traffic, this matters because it
-              communicates scarcity and order without overwhelming the buyer.
+              The master plan has been thoughtfully designed with fewer than three plots per acre, creating a low-density gated community with modern infrastructure, designer landscapes, and well-planned access roads.
             </p>
-            <div className="mt-8 border border-[#e1d7c6] bg-[#f8f6ef] p-5">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#9e6f32]">
-                Important disclosure
-              </p>
-              <p className="mt-3 text-sm leading-6 text-[#5e6759]">
-                The master plan has been thoughtfully designed with fewer than three plots per acre, creating a low-density gated community with modern infrastructure, designer landscapes, and well-planned access roads.
-              </p>
-            </div>
           </div>
           <div className="overflow-hidden border border-[#e1d7c6] bg-[#6e7a5a] p-3">
             <Image
