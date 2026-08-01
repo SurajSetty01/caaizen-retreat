@@ -51,6 +51,27 @@ function getSheetsClient() {
   return sheetsClient;
 }
 
+const timestampFormatter = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Asia/Kolkata",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hourCycle: "h23",
+});
+
+// Written as "YYYY-MM-DD HH:mm:ss" in IST so Sheets stores it as a real
+// datetime under USER_ENTERED, which keeps sorting and filtering working.
+function formatSubmittedAt(date: Date) {
+  const parts = timestampFormatter.formatToParts(date);
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((part) => part.type === type)?.value ?? "";
+
+  return `${get("year")}-${get("month")}-${get("day")} ${get("hour")}:${get("minute")}:${get("second")}`;
+}
+
 export async function appendLeadToSheet(lead: Lead) {
   const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
   const sheetName = process.env.GOOGLE_SHEETS_SHEET_NAME ?? "Sheet1";
@@ -59,13 +80,15 @@ export async function appendLeadToSheet(lead: Lead) {
     throw new Error("GOOGLE_SHEETS_SPREADSHEET_ID is not configured.");
   }
 
+  // Columns A and B stay exactly as the CRM expects. The timestamp goes in
+  // column C so a CRM export of A:B is still a straight copy.
   await getSheetsClient().spreadsheets.values.append({
     spreadsheetId,
-    range: `${sheetName}!A:B`,
+    range: `${sheetName}!A:C`,
     valueInputOption: "USER_ENTERED",
     insertDataOption: "INSERT_ROWS",
     requestBody: {
-      values: [[lead.name, lead.mobile]],
+      values: [[lead.name, lead.mobile, formatSubmittedAt(new Date())]],
     },
   });
 }

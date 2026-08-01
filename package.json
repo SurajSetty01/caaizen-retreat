@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "recover-timestamps": "node scripts/recover-lead-timestamps.mjs"
   },
   "dependencies": {
     "googleapis": "^173.0.0",
