@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { appendLeadToSheet } from "@/lib/google-sheets";
+import { appendLeadToSheet, describeCredentialEnv } from "@/lib/google-sheets";
 import { leadSchema } from "@/lib/lead-validation";
 
 export const runtime = "nodejs";
@@ -64,7 +64,11 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    // The credential state goes in the same log line as the error: the message
+    // alone can't distinguish a mangled key from a stale or missing one, and the
+    // host's environment is the only place that difference is visible.
     console.error("Lead submission failed", error);
+    console.error("Lead credential env:", describeCredentialEnv());
 
     return NextResponse.json(
       { error: "We could not save your request. Please try again." },
