@@ -13,6 +13,32 @@
   --font-display: "Cormorant Garamond", "Times New Roman", serif;
 }
 
+/*
+ * FLUID ROOT SCALE — why the page looked "zoomed out" on a large display.
+ *
+ * The layout is authored in rem: Tailwind's type scale, its spacing scale and
+ * every `max-w-*` (the sections cap at `max-w-7xl` = 80rem) all derive from the
+ * root font size. With that fixed at the browser default 16px, the design is
+ * pinned to a ~1280px canvas no matter how much screen it is given — so on a
+ * large monitor it sits small in the middle of the viewport. Zooming to 133%
+ * fixed it because zoom scales exactly these units, together and in proportion.
+ *
+ * So do natively what the zoom was doing by hand: grow the root size with the
+ * viewport. Type, rhythm and container width all scale as one, and the layout
+ * keeps the proportions it was designed with instead of being stretched.
+ *
+ *   ≤1024px  16px   phones and tablets are untouched — they were never the problem
+ *    1512px  ~18.7px
+ *   ≥1920px  21px   the cap (≈131%, the setting that looked right by hand)
+ *
+ * Expressed in rem, not px, so a reader who has raised their browser's default
+ * font size keeps that preference — this multiplies it rather than replacing it.
+ * To retune the whole page, change only the third value.
+ */
+html {
+  font-size: clamp(1rem, 0.643rem + 0.558vw, 1.3125rem);
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

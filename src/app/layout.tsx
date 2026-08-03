@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Geist, Geist_Mono } from "next/font/google";
 import "lenis/dist/lenis.css";
 import { SmoothScroll } from "@/components/smooth-scroll";
+import { WhatsAppButton } from "@/components/whatsapp-button";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -75,6 +76,9 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-[#f4f0e6] text-[#182015]">
         <SmoothScroll>{children}</SmoothScroll>
+        {/* Outside SmoothScroll: it is position-fixed and must not be swept
+            along by Lenis's scroll transform. */}
+        <WhatsAppButton />
       </body>
     </html>
   );
