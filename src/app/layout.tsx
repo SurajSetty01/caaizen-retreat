@@ -23,7 +23,7 @@ const cormorant = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://caaizenretreat.com",
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://caaizentheretreat.com",
   ),
   title: {
     default: "Caaizen Retreat | Gated Farmhouse Community in Bidadi",

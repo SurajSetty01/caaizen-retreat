@@ -1,15 +1,60 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { leadSchema } from "@/lib/lead-validation";
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
+const fallbackMessages: Record<
+  string,
+  {
+    status: FormStatus;
+    message: string;
+  }
+> = {
+  success: {
+    status: "success",
+    message: "Thank you. Our team will call you shortly.",
+  },
+  invalid: {
+    status: "error",
+    message: "Please check the details and try again.",
+  },
+  "rate-limited": {
+    status: "error",
+    message: "Too many submissions. Please try again shortly.",
+  },
+  error: {
+    status: "error",
+    message: "We could not save your request. Please try again.",
+  },
+};
+
 export function LeadForm({ compact = false }: { compact?: boolean }) {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [message, setMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const leadStatus = url.searchParams.get("lead");
+    const fallback = leadStatus ? fallbackMessages[leadStatus] : null;
+
+    if (leadStatus || url.searchParams.has("name") || url.searchParams.has("mobile")) {
+      url.searchParams.delete("lead");
+      url.searchParams.delete("name");
+      url.searchParams.delete("mobile");
+      window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+    }
+
+    if (fallback) {
+      window.setTimeout(() => {
+        setStatus(fallback.status);
+        setMessage(fallback.message);
+      }, 0);
+    }
+  }, []);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -71,6 +116,8 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
 
   return (
     <form
+      action="/api/leads"
+      method="post"
       onSubmit={onSubmit}
       className={[
         "border border-white/15 bg-[#10170f]/90 p-5 text-white shadow-2xl shadow-black/30 backdrop-blur-md",

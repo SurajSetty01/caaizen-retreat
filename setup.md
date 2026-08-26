@@ -12,16 +12,20 @@ Open `http://localhost:3000`.
 ## 2. Create the Google Spreadsheet
 
 1. Create a Google Sheet.
-2. Rename the first tab to `Sheet1`, or use your own tab name and set `GOOGLE_SHEETS_SHEET_NAME`.
+2. Rename the lead tab if needed and set `GOOGLE_SHEETS_SHEET_NAME` to that tab title.
+   `WEBSITE FORM` is fine.
 3. Keep three columns:
    - Column A: `Name`
    - Column B: `Mobile`
    - Column C: `Submitted At`
-4. Copy the spreadsheet ID from the URL:
+4. Copy the spreadsheet ID and tab ID from the URL:
 
 ```text
-https://docs.google.com/spreadsheets/d/SPREADSHEET_ID_HERE/edit
+https://docs.google.com/spreadsheets/d/SPREADSHEET_ID_HERE/edit#gid=SHEET_ID_HERE
 ```
+
+The spreadsheet ID identifies the whole file. The sheet ID identifies the
+specific tab and stays stable even if the tab is renamed.
 
 ## 3. Create Google service account credentials
 
@@ -51,10 +55,15 @@ Fill these values:
 ```env
 NEXT_PUBLIC_SITE_URL=https://your-domain.com
 GOOGLE_SHEETS_SPREADSHEET_ID=your_spreadsheet_id
-GOOGLE_SHEETS_SHEET_NAME=Sheet1
+GOOGLE_SHEETS_SHEET_NAME=WEBSITE FORM
+GOOGLE_SHEETS_SHEET_ID=0
 GOOGLE_SERVICE_ACCOUNT_EMAIL=your-service-account@your-project.iam.gserviceaccount.com
 GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 ```
+
+`GOOGLE_SHEETS_SHEET_ID` is recommended for production. If the tab is renamed,
+the app resolves the current tab title from this stable ID before appending the
+lead.
 
 If the private key has real line breaks, keep it inside quotes. If you paste it as one line, replace each line break with `\n`.
 
@@ -103,6 +112,8 @@ Submit a test lead from the site and confirm one row appears in the sheet.
 On Vercel or another Next.js host:
 
 1. Add the same environment variables in the hosting dashboard.
+   For the current Caaizen sheet, use `GOOGLE_SHEETS_SHEET_ID=0` for the
+   `WEBSITE FORM` tab.
 2. Deploy the project.
 3. Test a lead submission on the production URL.
 4. Export columns A and B as CSV or XLSX for CRM import. Column C holds the

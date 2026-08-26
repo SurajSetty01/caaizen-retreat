@@ -3,6 +3,17 @@ import type { Lead } from "@/lib/lead-validation";
 
 let sheetsClient: sheets_v4.Sheets | null = null;
 
+const DEFAULT_LEAD_SHEET_NAME = "Sheet1";
+const LEAD_COLUMN_RANGE = "A:C";
+const LEAD_HEADERS = ["Name", "Mobile", "Submitted At"];
+
+type SpreadsheetSheet = {
+  sheetId?: number;
+  title: string;
+  index: number;
+  hidden: boolean;
+};
+
 /**
  * Turn whatever the host handed us into a canonical PEM.
  *
@@ -96,6 +107,7 @@ export function describeCredentialEnv() {
     `EMAIL{${process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ? "present" : "absent"}}`,
     `PRIVATE_KEY{${describeKey(process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY)}}`,
     `SPREADSHEET_ID{${process.env.GOOGLE_SHEETS_SPREADSHEET_ID ? "present" : "absent"}}`,
+    `SHEET_ID{${process.env.GOOGLE_SHEETS_SHEET_ID ?? "unset"}}`,
     `SHEET_NAME{${process.env.GOOGLE_SHEETS_SHEET_NAME ?? "unset"}}`,
   ].join(" ");
 }
@@ -142,6 +154,176 @@ function getSheetsClient() {
   return sheetsClient;
 }
 
+function getConfiguredSheetName() {
+  let sheetName =
+    process.env.GOOGLE_SHEETS_SHEET_NAME?.trim() || DEFAULT_LEAD_SHEET_NAME;
+
+  // Operators sometimes paste an A1 range into the env var. Keep only the tab.
+  const rangeSeparator = sheetName.indexOf("!");
+  if (rangeSeparator !== -1) {
+    sheetName = sheetName.slice(0, rangeSeparator).trim();
+  }
+
+  if (
+    (sheetName.startsWith("'") && sheetName.endsWith("'")) ||
+    (sheetName.startsWith('"') && sheetName.endsWith('"'))
+  ) {
+    sheetName = sheetName.slice(1, -1);
+  }
+
+  sheetName = sheetName.replace(/''/g, "'").trim();
+
+  return sheetName || DEFAULT_LEAD_SHEET_NAME;
+}
+
+function getConfiguredSheetId() {
+  const rawSheetId = process.env.GOOGLE_SHEETS_SHEET_ID?.trim();
+
+  if (!rawSheetId) {
+    return undefined;
+  }
+
+  const sheetId = Number(rawSheetId);
+
+  if (!Number.isInteger(sheetId) || sheetId < 0) {
+    throw new Error("GOOGLE_SHEETS_SHEET_ID must be a non-negative integer.");
+  }
+
+  return sheetId;
+}
+
+function quoteSheetNameForA1(sheetName: string) {
+  return `'${sheetName.replace(/'/g, "''")}'`;
+}
+
+function getLeadAppendRange(sheetName: string) {
+  return `${quoteSheetNameForA1(sheetName)}!${LEAD_COLUMN_RANGE}`;
+}
+
+async function listSpreadsheetSheets(
+  client: sheets_v4.Sheets,
+  spreadsheetId: string,
+): Promise<SpreadsheetSheet[]> {
+  const response = await client.spreadsheets.get({
+    spreadsheetId,
+    fields: "sheets(properties(sheetId,title,index,hidden))",
+  });
+
+  return (response.data.sheets ?? [])
+    .map((sheet) => ({
+      sheetId: sheet.properties?.sheetId ?? undefined,
+      title: sheet.properties?.title ?? "",
+      index: sheet.properties?.index ?? 0,
+      hidden: sheet.properties?.hidden ?? false,
+    }))
+    .filter((sheet) => sheet.title.length > 0)
+    .sort((a, b) => a.index - b.index);
+}
+
+function getFirstVisibleSheet(sheets: SpreadsheetSheet[]) {
+  return sheets.find((sheet) => !sheet.hidden) ?? sheets[0] ?? null;
+}
+
+async function createLeadSheet(
+  client: sheets_v4.Sheets,
+  spreadsheetId: string,
+  sheetTitle: string,
+) {
+  console.warn("Configured lead sheet title was not found; creating it.", {
+    configuredSheetName: sheetTitle,
+  });
+
+  const response = await client.spreadsheets.batchUpdate({
+    spreadsheetId,
+    requestBody: {
+      requests: [
+        {
+          addSheet: {
+            properties: {
+              title: sheetTitle,
+              gridProperties: {
+                rowCount: 1000,
+                columnCount: LEAD_HEADERS.length,
+              },
+            },
+          },
+        },
+      ],
+    },
+  });
+
+  const createdTitle =
+    response.data.replies?.[0]?.addSheet?.properties?.title ?? sheetTitle;
+
+  await client.spreadsheets.values.update({
+    spreadsheetId,
+    range: `${quoteSheetNameForA1(createdTitle)}!A1:C1`,
+    valueInputOption: "USER_ENTERED",
+    requestBody: {
+      values: [LEAD_HEADERS],
+    },
+  });
+
+  return createdTitle;
+}
+
+async function resolveLeadSheetTitle(
+  client: sheets_v4.Sheets,
+  spreadsheetId: string,
+) {
+  const configuredSheetName = getConfiguredSheetName();
+  const configuredSheetId = getConfiguredSheetId();
+  const spreadsheetSheets = await listSpreadsheetSheets(client, spreadsheetId);
+
+  if (spreadsheetSheets.length === 0) {
+    return createLeadSheet(client, spreadsheetId, configuredSheetName);
+  }
+
+  if (configuredSheetId !== undefined) {
+    const sheetById = spreadsheetSheets.find(
+      (sheet) => sheet.sheetId === configuredSheetId,
+    );
+
+    if (sheetById) {
+      return sheetById.title;
+    }
+
+    console.warn("Configured lead sheet ID was not found; falling back.", {
+      configuredSheetId,
+      availableSheetIds: spreadsheetSheets
+        .map((sheet) => sheet.sheetId)
+        .filter((sheetId): sheetId is number => sheetId !== undefined),
+    });
+  }
+
+  const sheetByName = spreadsheetSheets.find(
+    (sheet) => sheet.title === configuredSheetName,
+  );
+
+  if (sheetByName) {
+    return sheetByName.title;
+  }
+
+  if (configuredSheetName === DEFAULT_LEAD_SHEET_NAME) {
+    const fallbackSheet = getFirstVisibleSheet(spreadsheetSheets);
+
+    if (fallbackSheet) {
+      console.warn(
+        "Default lead sheet title was not found; using the first visible tab.",
+        {
+          configuredSheetName,
+          fallbackSheetTitle: fallbackSheet.title,
+          fallbackSheetId: fallbackSheet.sheetId,
+        },
+      );
+
+      return fallbackSheet.title;
+    }
+  }
+
+  return createLeadSheet(client, spreadsheetId, configuredSheetName);
+}
+
 const timestampFormatter = new Intl.DateTimeFormat("en-GB", {
   timeZone: "Asia/Kolkata",
   year: "numeric",
@@ -165,17 +347,19 @@ function formatSubmittedAt(date: Date) {
 
 export async function appendLeadToSheet(lead: Lead) {
   const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
-  const sheetName = process.env.GOOGLE_SHEETS_SHEET_NAME ?? "Sheet1";
 
   if (!spreadsheetId) {
     throw new Error("GOOGLE_SHEETS_SPREADSHEET_ID is not configured.");
   }
 
+  const client = getSheetsClient();
+  const sheetName = await resolveLeadSheetTitle(client, spreadsheetId);
+
   // Columns A and B stay exactly as the CRM expects. The timestamp goes in
   // column C so a CRM export of A:B is still a straight copy.
-  await getSheetsClient().spreadsheets.values.append({
+  await client.spreadsheets.values.append({
     spreadsheetId,
-    range: `${sheetName}!A:C`,
+    range: getLeadAppendRange(sheetName),
     valueInputOption: "USER_ENTERED",
     insertDataOption: "INSERT_ROWS",
     requestBody: {
