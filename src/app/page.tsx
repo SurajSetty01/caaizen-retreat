@@ -14,6 +14,7 @@ import {
   Trees,
   Waves,
 } from "lucide-react";
+import { DroneReel } from "@/components/drone-reel";
 import { LeadForm } from "@/components/lead-form";
 import { VillaCarousel } from "@/components/villa-carousel";
 
@@ -209,6 +210,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <DroneReel />
 
       <section id="details" className="bg-[#182015] px-5 py-7 text-white md:px-8">
         <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-4">
