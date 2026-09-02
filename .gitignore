@@ -42,3 +42,6 @@ next-env.d.ts
 
 # recovered lead exports (contain personal data)
 /scripts/output/
+
+# source video masters (large; web-optimized versions live in public/retreat/video/)
+*.mov
