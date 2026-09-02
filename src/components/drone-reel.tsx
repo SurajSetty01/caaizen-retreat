@@ -1,6 +1,6 @@
 "use client";
 
-import { Play, Volume2 } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 
 const MP4_SRC = "/retreat/video/drone-reel.mp4";
@@ -17,7 +17,7 @@ export function DroneReel() {
       return;
     }
 
-    // Runs inside the click handler, so browsers allow unmuted playback.
+    // Inside the click handler, so browsers permit unmuted playback.
     video.muted = false;
     video.play().catch(() => {
       video.muted = true;
@@ -27,38 +27,53 @@ export function DroneReel() {
   }, []);
 
   return (
-    <section className="relative isolate overflow-hidden bg-[#0d130c] px-5 py-24 text-white md:px-8 md:py-32">
-      {/* Soft brand glows for depth, no photographic clutter. */}
+    <section className="relative isolate overflow-hidden bg-[#0d130c] text-white">
+      {/* Brand glows for depth. */}
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(201,162,93,0.16),transparent_55%)]"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-[radial-gradient(ellipse_at_bottom,rgba(85,114,71,0.18),transparent_60%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(85,114,71,0.28),transparent_45%),radial-gradient(circle_at_85%_80%,rgba(201,162,93,0.22),transparent_45%)]"
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center">
-        <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#e0bd76]">
-          The Retreat in motion
-        </p>
-        <h2 className="mt-5 font-display text-4xl font-semibold leading-tight md:text-6xl">
-          A short film of the life waiting here
-        </h2>
-        <p className="mt-5 max-w-xl text-lg leading-8 text-white/70">
-          Green all the way to the horizon, wide plotted roads and the calm of
-          open land. Press play to experience it with sound.
-        </p>
+      <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-y-12 px-5 py-20 md:px-8 md:py-28 lg:grid-cols-[1.05fr_0.95fr] lg:gap-x-16">
+        {/* Copy column */}
+        <div className="max-w-xl">
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#e0bd76]">
+            Watch before you visit
+          </p>
+          <h2 className="mt-5 font-display text-4xl font-semibold leading-[1.05] md:text-6xl">
+            See why buyers are choosing The&nbsp;Retreat
+          </h2>
+          <p className="mt-6 text-lg leading-8 text-white/72">
+            Acres of green, wide open roads and gated calm just off Mysore Road
+            in Bidadi. Take a look at the land, then book your site visit before
+            the best plots are gone.
+          </p>
 
-        {/* The video is the hero: a single, self-contained portrait frame. */}
-        <div className="group relative mt-12 w-full max-w-[340px]">
-          {/* Ambient gold aura behind the frame instead of empty space. */}
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <a
+              href="#lead"
+              className="group inline-flex h-12 items-center justify-center gap-2 bg-[#c9a25d] px-6 text-sm font-bold uppercase tracking-[0.18em] text-[#0d130c] transition hover:bg-[#e0bd76]"
+            >
+              Book a site visit
+              <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
+            </a>
+            <p className="text-sm font-semibold text-white/60">
+              Plots from{" "}
+              <span className="font-display text-xl font-semibold text-[#e0bd76]">
+                &#8377;1.5 Cr
+              </span>
+            </p>
+          </div>
+        </div>
+
+        {/* Video column: the portrait frame is the focal point. */}
+        <div className="group relative mx-auto w-full max-w-[360px]">
           <div
-            className="pointer-events-none absolute -inset-4 bg-[#c9a25d]/20 opacity-60 blur-3xl transition duration-500 group-hover:opacity-90"
+            className="pointer-events-none absolute -inset-5 bg-[#c9a25d]/25 opacity-70 blur-3xl transition duration-500 group-hover:opacity-100"
             aria-hidden="true"
           />
 
-          <div className="relative aspect-[9/16] w-full overflow-hidden border border-[#c9a25d]/45 bg-black shadow-[0_35px_90px_-25px_rgba(0,0,0,0.85)] ring-1 ring-white/10">
+          <div className="relative aspect-[9/16] w-full overflow-hidden border border-[#c9a25d]/50 bg-black shadow-[0_45px_120px_-30px_rgba(0,0,0,0.9)] ring-1 ring-white/10">
             <video
               ref={videoRef}
               className="absolute inset-0 h-full w-full object-cover"
@@ -76,14 +91,20 @@ export function DroneReel() {
               <button
                 type="button"
                 onClick={handlePlay}
-                aria-label="Play the film with sound"
-                className="absolute inset-0 grid place-items-center bg-[linear-gradient(180deg,rgba(13,19,12,0.15),rgba(13,19,12,0.65))] transition"
+                aria-label="Play the video with sound"
+                className="absolute inset-0 grid place-items-center bg-[linear-gradient(180deg,rgba(13,19,12,0.1),rgba(13,19,12,0.7))] transition"
               >
-                <span className="grid size-[4.5rem] place-items-center bg-[#c9a25d] text-[#0d130c] shadow-2xl shadow-black/50 transition duration-300 group-hover:scale-105 group-hover:bg-[#e0bd76]">
-                  <Play className="size-7 translate-x-0.5 fill-current" />
+                {/* Pulsing ring + solid gold disc: a proper play affordance. */}
+                <span className="relative grid size-20 place-items-center">
+                  <span
+                    className="absolute inset-0 animate-ping rounded-full bg-[#c9a25d]/40"
+                    aria-hidden="true"
+                  />
+                  <span className="relative grid size-16 place-items-center rounded-full bg-[#c9a25d] text-[#0d130c] shadow-2xl shadow-black/50 transition duration-300 group-hover:scale-105 group-hover:bg-[#e0bd76]">
+                    <Play className="size-7 translate-x-0.5 fill-current" />
+                  </span>
                 </span>
-                <span className="absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap text-xs font-bold uppercase tracking-[0.22em] text-white/90">
-                  <Volume2 className="size-3.5" />
+                <span className="absolute bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-bold uppercase tracking-[0.24em] text-white/90">
                   Play with sound
                 </span>
               </button>

@@ -46,6 +46,30 @@ body {
   text-rendering: geometricPrecision;
 }
 
+/* Site-wide scrollbar in the brand palette: deep forest track, gold thumb. */
+html {
+  scrollbar-color: #c9a25d #10170f;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #10170f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c9a25d;
+  border: 3px solid #10170f;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e0bd76;
+}
+
 ::selection {
   background: #c9a25d;
   color: #10170f;

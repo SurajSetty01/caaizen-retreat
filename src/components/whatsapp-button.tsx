@@ -41,7 +41,7 @@ export function WhatsAppButton() {
       rel="noopener noreferrer"
       aria-label="Chat with Caaizen Realty on WhatsApp"
       title="Chat on WhatsApp"
-      className="fixed bottom-6 right-6 z-50 inline-flex size-13 items-center justify-center rounded-full bg-[#25d366] text-white shadow-lg shadow-black/15 transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#25d366]"
+      className="group fixed bottom-6 right-6 z-50 inline-flex size-14 items-center justify-center !rounded-full bg-[#25d366] text-white shadow-xl shadow-[#25d366]/30 ring-4 ring-[#25d366]/15 transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#25d366]/40 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#25d366]"
     >
       {/* The official WhatsApp glyph, drawn inline: lucide carries no brand
           marks, and an <img> would cost a request for 700 bytes of path. */}
