@@ -175,7 +175,7 @@ export default function Home() {
 
         <div className="relative z-10 mx-auto grid min-h-[calc(100vh-88px)] w-full max-w-7xl items-center gap-10 px-5 pb-12 pt-10 md:grid-cols-[1fr_420px] md:px-8 md:pb-16">
           <div className="max-w-3xl animate-rise">
-            <p className="mb-5 inline-flex items-center gap-2 border border-white/20 bg-white/10 px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#e0bd76] backdrop-blur">
+            <p className="mb-5 inline-flex items-center gap-2.5 border border-[#c9a25d]/60 bg-[#c9a25d]/15 px-4 py-2.5 text-sm font-bold uppercase tracking-[0.22em] text-[#e7c987] backdrop-blur">
               <MapPin className="size-4" />
               Bidadi, Bengaluru
             </p>
@@ -184,8 +184,18 @@ export default function Home() {
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-white/78 md:text-xl">
               A gated farmhouse community of expansive plots, compact cottages
-              and edible gardens near Mysore Road. Built for buyers who want
-              nature, privacy and long-term Bidadi growth in one address.
+              and edible gardens near Mysore Road, in one of Bengaluru&apos;s
+              fastest-growing corridors. Built for buyers who want nature,
+              privacy and lasting value in one address.
+            </p>
+
+            <p className="mt-7 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <span className="text-sm font-semibold uppercase tracking-[0.2em] text-white/60">
+                Pricing starts from
+              </span>
+              <span className="font-display text-3xl font-semibold text-[#e0bd76] md:text-4xl">
+                &#8377;1.5 Crore onwards
+              </span>
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
