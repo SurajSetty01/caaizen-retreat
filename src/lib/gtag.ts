@@ -9,27 +9,33 @@
  * spending on whatever is cheapest to click rather than on whatever produces
  * callbacks.
  *
- * ONE CONVERSION ACTION, TWO TRIGGERS. The Ads account has a single "Contact"
- * conversion action, and both the callback form and the WhatsApp button report
- * to it. Telling the two apart in reporting would need a SECOND conversion
- * action created in the Ads console and a second label added here — it is not
- * something this file can split on its own.
+ * TWO SEPARATE CONVERSION ACTIONS. A form submission and a WhatsApp tap are
+ * different events with different intent, so they report to different actions
+ * in the Ads account and can be bid on and reported separately. They were
+ * briefly collapsed into one shared action, which made them indistinguishable
+ * in reporting — do not merge them again without a reason.
  *
- * FIRING ONCE PER VISIT IS DELIBERATE. Somebody who submits the form and then
- * also taps WhatsApp is one contact, not two, and somebody who taps WhatsApp
- * five times is still one. Inflated conversions are worse than no conversions,
- * because Smart Bidding learns from them. The "already counted" flag lives in
+ * FIRING IS CAPPED PER ACTION, NOT GLOBALLY. That distinction matters. One
+ * person who submits the form AND taps WhatsApp is one lead and one WhatsApp
+ * enquiry: both should be reported, because they are different actions. But one
+ * person tapping WhatsApp five times is still one enquiry. So the "already
+ * counted" flag is keyed per action rather than shared. It lives in
  * `sessionStorage`, so it is per tab and resets on a genuinely new visit.
+ *
+ * Inflated conversions are worse than none: Smart Bidding learns from them.
  */
 
 /** The account-level Google tag. Same on every page. */
 export const GOOGLE_ADS_ID = "AW-18300583994";
 
-/** The "Contact" conversion action's send_to target. */
-export const CONTACT_CONVERSION_LABEL = "AW-18300583994/y5R5CKzPmvscELqAs5ZE";
+/** "Submit lead form" — fired from /thank-you after a real submission. */
+const LEAD_FORM_CONVERSION = "AW-18300583994/puIMCOfrmvscELqAs5ZE";
 
-const FIRED_KEY = "caaizen:contact-conversion-fired";
+/** "Contact" — fired when the WhatsApp link is tapped. */
+const WHATSAPP_CONVERSION = "AW-18300583994/y5R5CKzPmvscELqAs5ZE";
+
 const PENDING_LEAD_KEY = "caaizen:pending-lead";
+const FIRED_PREFIX = "caaizen:fired:";
 
 declare global {
   interface Window {
@@ -39,10 +45,10 @@ declare global {
 }
 
 /**
- * Production only. A `npm run dev` session or a local `npm start` should never
- * put rows into the Ads account — the numbers there drive bidding, and a
- * developer reloading the thank-you page is not a lead. Verify the live site
- * with Google's Tag Assistant, not localhost.
+ * Production only. A `npm run dev` session or a local `npm start` must never
+ * put rows into the Ads account — those numbers drive bidding, and a developer
+ * reloading the thank-you page is not a lead. Verify the live site with
+ * Google's Tag Assistant, not localhost.
  */
 export const trackingEnabled = process.env.NODE_ENV === "production";
 
@@ -85,8 +91,8 @@ function createId() {
  *
  * This token is what makes /thank-you trustworthy. The page is a plain URL —
  * it can be reloaded, bookmarked, shared or crawled — and every one of those
- * would otherwise count as a conversion. Only a real successful POST mints a
- * token, and /thank-you spends it exactly once.
+ * would otherwise count as a lead. Only a real successful POST mints a token,
+ * and /thank-you spends it exactly once.
  */
 export function markLeadSubmitted() {
   if (typeof window === "undefined") return;
@@ -122,22 +128,34 @@ function resolveGtag() {
 }
 
 /**
- * Reports one contact to Google Ads, at most once per tab.
- *
- * `transaction_id` is passed when we have one so Google can discard a duplicate
- * on its side too, which covers the case where the same person converts from a
- * second tab.
+ * `name` keys the once-per-tab flag, so each conversion action is capped
+ * independently. `transaction_id` is passed when we have one so Google can
+ * discard a duplicate on its side too, which covers converting from a second
+ * tab.
  */
-export function fireContactConversion(transactionId?: string) {
+function fireConversion(name: string, sendTo: string, transactionId?: string) {
   if (typeof window === "undefined" || !trackingEnabled) return;
-  if (readSession(FIRED_KEY)) return;
 
-  writeSession(FIRED_KEY, "1");
+  const firedKey = `${FIRED_PREFIX}${name}`;
+
+  if (readSession(firedKey)) return;
+
+  writeSession(firedKey, "1");
 
   resolveGtag()("event", "conversion", {
-    send_to: CONTACT_CONVERSION_LABEL,
+    send_to: sendTo,
     value: 1.0,
     currency: "INR",
     ...(transactionId ? { transaction_id: transactionId } : {}),
   });
+}
+
+/** A completed callback request. Fired from /thank-you, once per tab. */
+export function fireLeadFormConversion(transactionId: string) {
+  fireConversion("lead-form", LEAD_FORM_CONVERSION, transactionId);
+}
+
+/** A WhatsApp enquiry. Once per tab, however many times the link is tapped. */
+export function fireWhatsAppConversion() {
+  fireConversion("whatsapp", WHATSAPP_CONVERSION);
 }

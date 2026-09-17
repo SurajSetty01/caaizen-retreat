@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { consumePendingLead, fireContactConversion } from "@/lib/gtag";
+import { consumePendingLead, fireLeadFormConversion } from "@/lib/gtag";
 
 /**
  * Fires the Ads conversion on /thank-you — but only for a real submission.
@@ -21,7 +21,7 @@ export function ThankYouConversion() {
     // Direct visit, refresh, or a crawler. Nobody filled anything in.
     if (!leadId) return;
 
-    fireContactConversion(leadId);
+    fireLeadFormConversion(leadId);
   }, []);
 
   return null;

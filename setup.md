@@ -186,13 +186,14 @@ This backfill has already been run for the leads captured up to 2026-07-26.
 
 ### What is installed
 
-The account-level Google tag (`AW-18300583994`) is on every page, and one
-conversion action — "Contact" — is reported from two places:
+The account-level Google tag (`AW-18300583994`) is on every page, and two
+SEPARATE conversion actions are reported, so form fills and WhatsApp enquiries
+can be read and bid on apart from each other:
 
-| Trigger | Where it fires |
-| --- | --- |
-| Callback form submitted | `/thank-you`, after a successful POST to `/api/leads` |
-| WhatsApp tapped | Wherever the WhatsApp link appears (floating button, thank-you page) |
+| Conversion action | Fires when | Where |
+| --- | --- | --- |
+| Submit lead form (`puIMCOfrmvscELqAs5ZE`) | The callback form is submitted and accepted | `/thank-you`, after a successful POST to `/api/leads` |
+| Contact (`y5R5CKzPmvscELqAs5ZE`) | The WhatsApp link is tapped | Floating button, and the thank-you page |
 
 Both IDs live in one file, [src/lib/gtag.ts](./src/lib/gtag.ts). Nothing else
 hardcodes them.
@@ -213,8 +214,9 @@ none, because Smart Bidding optimises against them. Three guards:
 1. A successful POST mints a one-shot token; `/thank-you` spends it exactly
    once. No token — a direct visit, a refresh, a crawler — means the page still
    renders but reports nothing.
-2. The conversion fires at most once per tab, so form-then-WhatsApp is one
-   contact, and five WhatsApp taps are one contact.
+2. Each action is capped at once per tab — keyed PER ACTION, not shared. Five
+   WhatsApp taps are one enquiry. But somebody who submits the form and then
+   also taps WhatsApp fires both, and should: they are different events.
 3. `/thank-you` is `noindex, nofollow` and is kept out of `sitemap.ts`.
 
 ### Nothing fires outside production
@@ -234,11 +236,8 @@ Tag Assistant, not on localhost.
 4. Google Ads → Goals → Conversions takes a few hours to move. "Unverified"
    there until the first real conversion arrives is normal.
 
-### Two things this does not do yet
+### What this does not do yet
 
-- **Form fills and WhatsApp taps cannot be told apart in reporting**, because
-  they share one conversion action. Separating them needs a second conversion
-  action created in the Ads console and a second label in `gtag.ts`.
 - **A closed sale is not tied back to the ad.** The conversion says "someone
   made contact", not "someone bought", so bidding optimises for volume of
   enquiries rather than revenue. Fixing that is enhanced conversions for leads

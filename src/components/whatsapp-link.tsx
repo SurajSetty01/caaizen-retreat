@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { fireContactConversion } from "@/lib/gtag";
+import { fireWhatsAppConversion } from "@/lib/gtag";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 
 /**
@@ -14,8 +14,13 @@ import { WHATSAPP_URL } from "@/lib/whatsapp";
  *
  * STILL A PLAIN ANCHOR. The click handler is additive: the href, the new tab
  * and the prefilled message all work with JavaScript disabled or broken, and a
- * failed conversion never costs a lead. `fireContactConversion` is itself
- * capped at one per tab, so a visitor tapping this five times is counted once.
+ * failed conversion never costs a lead. The WhatsApp conversion is capped at
+ * one per tab, so a visitor tapping this five times is counted once.
+ *
+ * SEPARATE CONVERSION ACTION. This reports to its own action in the Ads
+ * account, not the lead form's, so the two can be read and bid on apart.
+ * Somebody who submits the form and then also taps WhatsApp fires both, and
+ * should: they are different events with different intent.
  */
 export function WhatsAppLink({
   className,
@@ -33,7 +38,7 @@ export function WhatsAppLink({
       href={WHATSAPP_URL}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={() => fireContactConversion()}
+      onClick={() => fireWhatsAppConversion()}
       aria-label={ariaLabel}
       title={title}
       className={className}
