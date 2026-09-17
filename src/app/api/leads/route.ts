@@ -8,7 +8,7 @@ const submissions = new Map<string, { count: number; resetAt: number }>();
 const windowMs = 60_000;
 const maxSubmissionsPerWindow = 5;
 
-type LeadStatus = "success" | "invalid" | "rate-limited" | "error";
+type LeadStatus = "invalid" | "rate-limited" | "error";
 
 function getClientIp(request: NextRequest) {
   return (
@@ -47,6 +47,21 @@ function redirectToLeadForm(request: NextRequest, status: LeadStatus) {
   url.hash = "lead";
 
   return NextResponse.redirect(url, { status: 303 });
+}
+
+/**
+ * The no-JavaScript success path.
+ *
+ * It lands on the same page as everyone else so the two paths do not drift.
+ * No conversion is reported for it and none can be: with scripting off, gtag
+ * never loads. That is a rounding error in traffic and not worth engineering
+ * around, but it is the reason the number in Google Ads will always sit a
+ * shade under the row count in the sheet.
+ */
+function redirectToThankYou(request: NextRequest) {
+  return NextResponse.redirect(new URL("/thank-you", request.url), {
+    status: 303,
+  });
 }
 
 async function readLeadPayload(request: NextRequest) {
@@ -124,7 +139,7 @@ export async function POST(request: NextRequest) {
     await appendLeadToSheet(parsed.data);
 
     if (submission.browserFormPost) {
-      return redirectToLeadForm(request, "success");
+      return redirectToThankYou(request);
     }
 
     return NextResponse.json({ success: true });

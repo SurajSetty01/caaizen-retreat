@@ -1,7 +1,9 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
+import { markLeadSubmitted } from "@/lib/gtag";
 import { leadSchema } from "@/lib/lead-validation";
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
@@ -32,6 +34,7 @@ const fallbackMessages: Record<
 };
 
 export function LeadForm({ compact = false }: { compact?: boolean }) {
+  const router = useRouter();
   const [status, setStatus] = useState<FormStatus>("idle");
   const [message, setMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -104,6 +107,12 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
       form.reset();
       setStatus("success");
       setMessage("Thank you. Our team will call you shortly.");
+
+      // Mint the one-shot token BEFORE navigating. /thank-you spends it to
+      // tell a real submission apart from a reload or a shared link, which
+      // is what keeps the Ads conversion count honest.
+      markLeadSubmitted();
+      router.push("/thank-you");
     } catch (error) {
       setStatus("error");
       setMessage(

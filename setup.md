@@ -181,3 +181,66 @@ cannot be mis-stamped. Run it without `--write` first to see exactly what it
 would do.
 
 This backfill has already been run for the leads captured up to 2026-07-26.
+
+## 9. Google Ads conversion tracking
+
+### What is installed
+
+The account-level Google tag (`AW-18300583994`) is on every page, and one
+conversion action — "Contact" — is reported from two places:
+
+| Trigger | Where it fires |
+| --- | --- |
+| Callback form submitted | `/thank-you`, after a successful POST to `/api/leads` |
+| WhatsApp tapped | Wherever the WhatsApp link appears (floating button, thank-you page) |
+
+Both IDs live in one file, [src/lib/gtag.ts](./src/lib/gtag.ts). Nothing else
+hardcodes them.
+
+### Why the form now redirects
+
+Submitting used to show a line of text in place. It now lands on `/thank-you`,
+because a conversion tag needs a URL that Google Ads (and later any other ad
+platform) can point a trigger at, and because someone who has just raised their
+hand is the best possible audience for a WhatsApp prompt.
+
+### The count is protected on purpose
+
+A thank-you URL can be reloaded, bookmarked, shared and crawled, and each of
+those would otherwise be counted as a lead. Inflated conversions are worse than
+none, because Smart Bidding optimises against them. Three guards:
+
+1. A successful POST mints a one-shot token; `/thank-you` spends it exactly
+   once. No token — a direct visit, a refresh, a crawler — means the page still
+   renders but reports nothing.
+2. The conversion fires at most once per tab, so form-then-WhatsApp is one
+   contact, and five WhatsApp taps are one contact.
+3. `/thank-you` is `noindex, nofollow` and is kept out of `sitemap.ts`.
+
+### Nothing fires outside production
+
+`trackingEnabled` is `NODE_ENV === "production"`, so `npm run dev` and a local
+`npm start` never touch the Ads account. Verify on the live site with Google's
+Tag Assistant, not on localhost.
+
+### Verifying after a deploy
+
+1. View source on the live site. There must be **exactly one**
+   `googletagmanager.com/gtag/js` script tag, in `<head>`. More than one
+   double-counts every conversion.
+2. Submit a real form. You should land on `/thank-you`, and Tag Assistant
+   should show one `conversion` event.
+3. Reload `/thank-you`. Tag Assistant should show **no** second conversion.
+4. Google Ads → Goals → Conversions takes a few hours to move. "Unverified"
+   there until the first real conversion arrives is normal.
+
+### Two things this does not do yet
+
+- **Form fills and WhatsApp taps cannot be told apart in reporting**, because
+  they share one conversion action. Separating them needs a second conversion
+  action created in the Ads console and a second label in `gtag.ts`.
+- **A closed sale is not tied back to the ad.** The conversion says "someone
+  made contact", not "someone bought", so bidding optimises for volume of
+  enquiries rather than revenue. Fixing that is enhanced conversions for leads
+  plus an offline upload of won deals, and it needs sale outcomes coming back
+  from wherever the leads are worked.

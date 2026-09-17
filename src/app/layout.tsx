@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Geist, Geist_Mono } from "next/font/google";
 import "lenis/dist/lenis.css";
+import { GoogleTag } from "@/components/google-tag";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import "./globals.css";
@@ -75,6 +76,9 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-[#f4f0e6] text-[#182015]">
+        {/* The account-level Google Ads tag, once, on every page. Google's
+            own instruction is that a second copy must never exist. */}
+        <GoogleTag />
         <SmoothScroll>{children}</SmoothScroll>
         {/* Outside SmoothScroll: it is position-fixed and must not be swept
             along by Lenis's scroll transform. */}
